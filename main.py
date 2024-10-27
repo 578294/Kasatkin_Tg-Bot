@@ -37,16 +37,14 @@ def answer(message: telebot.types.Message) -> None:
     else:
         print('Неверный формат сообщения')
 
-# def choice_POPUTI(message: telebot.types.Message):
-#     chat_id = message.chat.id
-#     bot.send_message(chat_id, messages.client_name)
-#
-#     if message.text == messages.button_DimIl:
-#         bot.send_message(chat_id, messages.button_choise_POPUTI)
-#         client_name(message)
-#     elif message.text == messages.button_POPUTI:
-#         bot.send_message(chat_id, messages.button_info_POPUTI)
-#         choice_POPUTI(message)
+def choice_POPUTI(message: telebot.types.Message):
+    chat_id = message.chat.id
+    bot.send_message(chat_id, messages.button_choise_POPUTI)
+
+    if message.text == messages.button_contact_POPUTI:
+        bot.send_message(chat_id, messages.message_contact_POPUTI)
+    else:
+        choice(message)
 
 def client_name(message: telebot.types.Message):
     chat_id = message.chat.id
