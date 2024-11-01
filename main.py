@@ -39,12 +39,25 @@ def answer(message: telebot.types.Message) -> None:
 
 def choice_POPUTI(message: telebot.types.Message):
     chat_id = message.chat.id
-    bot.send_message(chat_id, messages.button_choise_POPUTI)
+    keyboard = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)
+    button1 = telebot.types.KeyboardButton(text=messages.button_contact_POPUTI)
+    button2 = telebot.types.KeyboardButton(text=messages.button_reverse)
+    keyboard.add(button1)
+    keyboard.add(button2)
+    bot.send_message(chat_id, "Поступайте на курсы в Cursera", reply_markup=keyboard)
+    bot.register_next_step_handler(message, choice_answer_POPUTI)
 
+def choice_answer_POPUTI(message: telebot.types.Message):
+    chat_id = message.chat.id
+    CLIENTS_INFO[chat_id] = {}
     if message.text == messages.button_contact_POPUTI:
         bot.send_message(chat_id, messages.message_contact_POPUTI)
+        welcome(message)
+    elif message.text == messages.button_reverse:
+        welcome(message)
     else:
-        choice(message)
+        print('Неверный формат сообщения')
+
 
 def client_name(message: telebot.types.Message):
     chat_id = message.chat.id
