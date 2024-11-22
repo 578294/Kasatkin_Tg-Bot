@@ -1,9 +1,16 @@
+"""
+Данный файл представляет Tg-бота https://t.me/DimIl_POPUTI_bot, который помогает
+оставить заявку для бронирования номера в гостевом доме "ДимИль"
+и магазине аксессуаров в дорогу "ПОПУТИ".
+"""
+
 import telebot
 import messages
 from peewee import *
 from config import TOKEN
 bot = telebot.TeleBot(TOKEN)
 
+# CLIENTS_INFO - словарь в котором находятся промежуточные пользовательские данные
 CLIENTS_INFO = {
 
 }
@@ -11,6 +18,10 @@ CLIENTS_INFO = {
 @bot.message_handler(commands=["start"])
 @bot.message_handler(func = lambda message: message.text == messages.button_reverse)
 def welcome(message: telebot.types.Message) -> None:
+    """
+    Отправляет приветственное сообщение.
+    Показывает клавиатуру с двумя кнопками: ДимИль и ПОПУТИ.
+    """
     chat_id = message.chat.id
     keyboard = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)
     button1 = telebot.types.KeyboardButton(text=messages.button_DimIl)
@@ -26,6 +37,12 @@ def welcome(message: telebot.types.Message) -> None:
 
 
 def answer(message: telebot.types.Message) -> None:
+    """
+    Выбирает вопрос по теме:
+    если "ДимИль", запускает процесс бронирования через client_name;
+    если "ПОПУТИ", выводит информацию и переходит к choice_POPUTI.
+    """
+
     chat_id = message.chat.id
     CLIENTS_INFO[chat_id] = {}
     if message.text == messages.button_DimIl:
@@ -37,7 +54,13 @@ def answer(message: telebot.types.Message) -> None:
     else:
         print('Неверный формат сообщения')
 
-def choice_POPUTI(message: telebot.types.Message):
+def choice_POPUTI(message: telebot.types.Message) -> None:
+    """
+    Выводит информацию о магазине ПОПУТИ.
+    Отображает кнопки:
+    контактная информация (button_contact_POPUTI);
+    вернуться назад (button_reverse).
+    """
     chat_id = message.chat.id
     keyboard = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)
     button1 = telebot.types.KeyboardButton(text=messages.button_contact_POPUTI)
@@ -47,7 +70,13 @@ def choice_POPUTI(message: telebot.types.Message):
     bot.send_message(chat_id, "Поступайте на курсы в Cursera", reply_markup=keyboard)
     bot.register_next_step_handler(message, choice_answer_POPUTI)
 
-def choice_answer_POPUTI(message: telebot.types.Message):
+def choice_answer_POPUTI(message: telebot.types.Message) -> None:
+    """
+    Выводит информацию о магазине ПОПУТИ.
+    Отображает кнопки:
+    контактная информация (button_contact_POPUTI);
+    вернуться назад (button_reverse).
+    """
     chat_id = message.chat.id
     CLIENTS_INFO[chat_id] = {}
     if message.text == messages.button_contact_POPUTI:
@@ -59,45 +88,66 @@ def choice_answer_POPUTI(message: telebot.types.Message):
         print('Неверный формат сообщения')
 
 
-def client_name(message: telebot.types.Message):
+def client_name(message: telebot.types.Message) -> None:
+    """
+    Запрашивает имя пользователя и переходит к сбору телефона через button_phone_number.
+    """
     chat_id = message.chat.id
     bot.send_message(chat_id, messages.client_name)
     CLIENTS_INFO[chat_id]['username'] = message.text
     bot.register_next_step_handler(message, button_phone_number)
 
-def button_phone_number(message: telebot.types.Message):
+def button_phone_number(message: telebot.types.Message) -> None:
+    """
+    Запрашивает номер телефона пользователя и переходит к сбору даты через button_flexible_date.
+    """
     chat_id = message.chat.id
     bot.send_message(chat_id, messages.button_phone_number)
     CLIENTS_INFO[chat_id]['phone_number'] = message.text
     bot.register_next_step_handler(message, button_flexible_date)
 
-def button_flexible_date(message: telebot.types.Message):
+def button_flexible_date(message: telebot.types.Message) -> None:
+    """
+    Запрашивает гибкую дату бронирования и переходит к сбору даты заезда через answer_button_check_in.
+    """
     chat_id = message.chat.id
     bot.send_message(chat_id, messages.button_flexible_date)
     CLIENTS_INFO[chat_id]['flexible_date'] = message.text
     bot.register_next_step_handler(message, answer_button_check_in)
 
-def answer_button_check_in(message: telebot.types.Message):
+def answer_button_check_in(message: telebot.types.Message) -> None:
+    """
+    Запрашивает дату заезда и переходит к дате выезда через answer_button_check_out.
+    """
     chat_id = message.chat.id
     bot.send_message(chat_id, messages.button_check_in)
     CLIENTS_INFO[chat_id]['enter_date'] = message.text
     bot.register_next_step_handler(message, answer_button_check_out)
 
-def answer_button_check_out(message: telebot.types.Message):
+def answer_button_check_out(message: telebot.types.Message) -> None:
+    """
+    Запрашивает дату выезда и переходит к количеству взрослых через answer_button_adults.
+    """
     chat_id = message.chat.id
     bot.send_message(chat_id, messages.button_check_out)
     CLIENTS_INFO[chat_id]['out_date'] = message.text
     print(message.text)
     bot.register_next_step_handler(message, answer_button_adults)
 
-def answer_button_adults(message: telebot.types.Message):
+def answer_button_adults(message: telebot.types.Message) -> None:
+    """
+    Запрашивает количество взрослых и переходит к количеству детей через answer_button_children.
+    """
     chat_id = message.chat.id
     bot.send_message(chat_id, messages.button_adults)
     CLIENTS_INFO[chat_id]['adult'] = message.text
     print(message.text)
     bot.register_next_step_handler(message, answer_button_children)
 
-def answer_button_children(message: telebot.types.Message):
+def answer_button_children(message: telebot.types.Message) -> None:
+    """
+    Запрашивает количество детей и завершает процесс бронирования через add_client.
+    """
     chat_id = message.chat.id
     bot.send_message(chat_id, messages.button_children)
     CLIENTS_INFO[chat_id]['children'] = message.text
@@ -108,6 +158,18 @@ db = SqliteDatabase('database_Dimil.db')
 
 
 class TDIMIL(Model):
+    """
+    При запуске создается таблица TDIMIL.
+
+    Поля:
+    client_name: Имя клиента;
+    button_phone_number: Номер телефона;
+    button_flexible_date: Гибкая дата бронирования;
+    button_check_in: Дата заезда;
+    button_check_out: Дата выезда;
+    button_adults: Количество взрослых;
+    button_children: Количество детей.
+    """
     client_name = CharField()
     button_phone_number = CharField()
     button_flexible_date = CharField()
@@ -121,7 +183,12 @@ class TDIMIL(Model):
 
 TDIMIL.create_table()
 
-def add_client(message: telebot.types.Message):
+def add_client(message: telebot.types.Message) -> None:
+    """
+    Сохраняет данные пользователя в базу данных.
+    Отправляет сообщение об успешном бронировании.
+    Возвращает пользователя к выбору действия через choice.
+    """
     chat_id = message.chat.id
     new_client = TDIMIL(
         client_name=CLIENTS_INFO[chat_id]['username'],
@@ -138,6 +205,9 @@ def add_client(message: telebot.types.Message):
 
 
 def choice(message: telebot.types.Message) -> None:
+    """
+    Выводит главное меню с кнопками: ДимИль, ПОПУТИ, Назад.
+    """
     chat_id = message.chat.id
     keyboard = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)
     button3 = telebot.types.KeyboardButton(text=messages.button_reverse)
@@ -156,6 +226,3 @@ def choice(message: telebot.types.Message) -> None:
 if __name__ == "__main__":
     print("Бот запущен!")
     bot.infinity_polling()
-
-
-#@bot.message_handler(func=lambda message: message.text == "Здравствуйте! Уточните, пожалуйста, вас интересует? ")
