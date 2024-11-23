@@ -10,7 +10,8 @@ from peewee import *
 from config import TOKEN
 bot = telebot.TeleBot(TOKEN)
 
-# CLIENTS_INFO - словарь в котором находятся промежуточные пользовательские данные
+
+#CLIENTS_INFO - словарь в котором находятся промежуточные пользовательские данные
 CLIENTS_INFO = {
 
 }
@@ -154,6 +155,7 @@ def answer_button_children(message: telebot.types.Message) -> None:
     print(message.text)
     bot.register_next_step_handler(message, add_client)
 
+#База данных
 db = SqliteDatabase('database_Dimil.db')
 
 
@@ -181,6 +183,9 @@ class TDIMIL(Model):
     class Meta:
         database = db
 
+"""
+База данных
+"""
 TDIMIL.create_table()
 
 def add_client(message: telebot.types.Message) -> None:
