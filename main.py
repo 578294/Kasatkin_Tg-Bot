@@ -6,6 +6,7 @@
 
 import telebot
 import messages
+from keyboard import KeyboardBot
 from peewee import *
 from config import TOKEN
 
@@ -26,15 +27,10 @@ def welcome(message: telebot.types.Message) -> None:
     Показывает клавиатуру с двумя кнопками: ДимИль и ПОПУТИ.
     """
     chat_id = message.chat.id
-    keyboard = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)
-    button1 = telebot.types.KeyboardButton(text=messages.BUTTON_DIMIL)
-    button2 = telebot.types.KeyboardButton(text=messages.BUTTON_POPUTI)
-    keyboard.add(button1)
-    keyboard.add(button2)
     BOT.send_message(
         chat_id,
         "Здравствуйте! Уточните пожалуйста, что вас интересует? ",
-        reply_markup=keyboard
+        reply_markup=KeyboardBot.main_menu()
     )
     BOT.register_next_step_handler(message, answer)
 
@@ -65,12 +61,8 @@ def choice_POPUTI(message: telebot.types.Message) -> None:
     вернуться назад (BUTTON_REVERSE).
     """
     chat_id = message.chat.id
-    keyboard = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)
-    button1 = telebot.types.KeyboardButton(text=messages.BUTTON_CONTACT_POPUTI)
-    button2 = telebot.types.KeyboardButton(text=messages.BUTTON_REVERSE)
-    keyboard.add(button1)
-    keyboard.add(button2)
-    BOT.send_message(chat_id, "Поступайте на курсы в Cursera", reply_markup=keyboard)
+
+    BOT.send_message(chat_id, "Поступайте на курсы в Cursera", reply_markup=KeyboardBot.main_menu())
     BOT.register_next_step_handler(message, choice_answer_POPUTI)
 
 
@@ -216,17 +208,10 @@ def choice(message: telebot.types.Message) -> None:
     Выводит главное меню с кнопками: ДимИль, ПОПУТИ, Назад.
     """
     chat_id = message.chat.id
-    keyboard = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)
-    button3 = telebot.types.KeyboardButton(text=messages.BUTTON_REVERSE)
-    button1 = telebot.types.KeyboardButton(text=messages.BUTTON_DIMIL)
-    button2 = telebot.types.KeyboardButton(text=messages.BUTTON_POPUTI)
-    keyboard.add(button1)
-    keyboard.add(button2)
-    keyboard.add(button3)
     BOT.send_message(
         chat_id,
         "Нефритовый жезл ",
-        reply_markup=keyboard
+        reply_markup=KeyboardBot.main_menu()
     )
 
 
