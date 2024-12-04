@@ -9,6 +9,7 @@ import messages
 from keyboard import KeyboardBot
 from peewee import *
 from config import TOKEN
+from database import TDIMIL
 
 # Константы
 BOT = telebot.TeleBot(TOKEN)
@@ -154,34 +155,6 @@ def answer_button_children(message: telebot.types.Message) -> None:
     BOT.register_next_step_handler(message, add_client)
 
 
-class TDIMIL(Model):
-    """
-    При запуске создается таблица TDIMIL.
-
-    Поля:
-    CLIENT_NAME: Имя клиента;
-    BUTTON_PHONE_NUMBER: Номер телефона;
-    BUTTON_FLEXIBLE_DATE: Гибкая дата бронирования;
-    BUTTON_CHECK_IN: Дата заезда;
-    BUTTON_CHECK_OUT: Дата выезда;
-    BUTTON_ADULTS: Количество взрослых;
-    BUTTON_CHILDREN: Количество детей.
-    """
-    client_name = CharField()
-    button_phone_number = CharField()
-    button_flexible_date = CharField()
-    button_check_in = CharField()
-    button_check_out = CharField()
-    button_adults = CharField()
-    button_children = CharField()
-
-    class Meta:
-        database = DB
-
-
-TDIMIL.create_table()
-
-
 def add_client(message: telebot.types.Message) -> None:
     """
     Сохраняет данные пользователя в базу данных.
@@ -200,7 +173,6 @@ def add_client(message: telebot.types.Message) -> None:
     )
     new_client.save()
     BOT.send_message(chat_id, messages.MESSAGE_ABOUT_DIMIL)
-    choice(message)
 
 
 def choice(message: telebot.types.Message) -> None:
