@@ -17,6 +17,7 @@ CLIENTS_INFO = {}
 # База данных
 DB = SqliteDatabase(DATABASE_NAME)
 
+
 @BOT.message_handler(commands=["start"])
 @BOT.message_handler(func=lambda message: message.text == messages.BUTTON_REVERSE)
 def welcome(message: telebot.types.Message) -> None:
